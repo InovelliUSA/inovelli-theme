@@ -1,0 +1,35 @@
+{
+  "name": "Inovelli Theme",
+  "version": 0.1,
+  "author": "Keegan George",
+  "about_url": null,
+  "license_url": null,
+  "assets": {
+  },
+  "color_schemes": {
+    "inovelli": {
+      "primary": "000000",
+      "secondary": "ffffff",
+      "tertiary": "ed1c24",
+      "quaternary": "ed1c24",
+      "header_background": "fff",
+      "header_primary": "000",
+      "highlight": "fce0e0",
+      "danger": "ed1c24",
+      "success": "009900",
+      "love": "ed1c24"
+    },
+    "inovelli dark": {
+      "primary": "ECECEC",
+      "secondary": "0F1A20",
+      "tertiary": "ed1c24",
+      "quaternary": "ed1c24",
+      "header_background": "0F1A20",
+      "header_primary": "ECECEC",
+      "highlight": "a87137",
+      "danger": "e45735",
+      "success": "1ca551",
+      "love": "fa6c8d"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+<div class='wrap'>
+  <ul class='inovelli-menu-items'>
+    {{#each menuItems as |item|}}
+      {{menu-item
+        item=item
+        myItem=myItem
+        showSubMenu=showSubMenu
+        currentItem=currentItem
+      }}
+    {{/each}}
+  </ul>
+</div>
+
+<div class='wrap'>
+  <div class='inovelli-sub-menu-container {{showSubMenu}}'>
+    <ul class='inovelli-menu-items'>
+      {{#each myItem as |item|}}
+        <li class='parent-item' {{action 'returnMain'}}>
+          {{d-icon 'arrow-left'}}
+          {{item.parent}}
+        </li>
+        {{menu-item item=item myItem=myItem showSubMenu=showSubMenu}}
+      {{/each}}
+    </ul>
+  </div>
+</div>

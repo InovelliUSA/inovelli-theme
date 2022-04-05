@@ -1,0 +1,8 @@
+menu_items:
+  type: list
+  default: 'Products,#,true|Support,https://support.inovelli.com/portal/home,false|About,#,true|Partner With Us,https://inovelli.com/partner-with-us,false|Community,https://community.inovelli.com/,false'
+  description: 'Comma-separated list for each item: Title,URL,HasSubMenu (true or false)'
+sub_menu_items:
+  type: list
+  default: 'Products,Switches,https://inovelli.com/products/switches/|Products,Lighting,https://inovelli.com/products/lighting|Products,Sensors,https://inovelli.com/products/sensors|Products,Accessories,https://inovelli.com/products/accessories|About,Our Story,https://inovelli.com/our-story/|About,Blog,https://inovelli.com/blog/|About,Privacy Policy,https://inovelli.com/privacy-policy/|About,Terms & Conditions,https://inovelli.com/terms-conditions|About,Warranty Returns & Price Match,https://inovelli.com/warranty-returns-price-match'
+  description: 'Comma-separated list for each item: Parent,Title,URL'

@@ -1,0 +1,39 @@
+.inovelli-menu-toggle {
+  display: flex;
+  flex-direction: column;
+  width: 30px;
+  cursor: pointer;
+
+  span {
+    background: var(--primary);
+    border-radius: 10px;
+    height: 3px;
+    margin: 3px 0;
+    transition: 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+    width: 100%;
+  }
+
+  .bar-middle {
+    width: 70%;
+  }
+
+  &.active {
+    .bar-top {
+      transform-origin: bottom;
+      transform: rotatez(45deg) translate(6px, 11px);
+    }
+
+    .bar-middle {
+      transform-origin: top;
+      transform: rotatez(-45deg) translate(-5px, 0);
+      width: 100%;
+    }
+
+    .bar-bottom {
+      transform-origin: bottom;
+      width: 50%;
+      transform: translate(0px, -11px) rotatez(45deg);
+      opacity: 0;
+    }
+  }
+}
