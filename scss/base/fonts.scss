@@ -1,0 +1,25 @@
+:root {
+  --heading-font-family: neue-haas-grotesk-text, sans-serif;
+  --monospace-font-family: 'IBM Plex Mono', monospace;
+}
+
+body {
+  font-family: var(--heading-font-family);
+}
+
+.cooked,
+.d-editor-preview {
+  font-family: var(--monospace-font-family);
+  font-weight: 100;
+  color: var(--primary);
+}
+
+.cooked big,
+.d-editor-preview big {
+  font-family: var(--heading-font-family);
+  color: var(--tertiary);
+}
+
+#search-term {
+  font-family: var(--monospace-font-family);
+}

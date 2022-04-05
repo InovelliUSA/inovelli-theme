@@ -1,7 +1,9 @@
-@import 'header';
-@import 'inovelli-menu-toggle';
-@import 'inovelli-menu-panel';
+//Base
+@import 'base/fonts';
 
-:root {
-  --heading-font-family: neue-haas-grotesk-text, sans-serif;
-}
+// Components
+
+// Header Component:
+@import 'components/header/header';
+@import 'components/header/inovelli-menu-toggle';
+@import 'components/header/inovelli-menu-panel';
