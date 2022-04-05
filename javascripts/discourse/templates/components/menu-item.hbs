@@ -1,3 +1,8 @@
-<div {{action 'selectItem' item}}>
-  {{item.title}}
+<div class='inovelli-menu-item' {{action 'selectItem' item}}>
+  <div>
+    {{item.title}}
+  </div>
+  {{#if item.children}}
+    {{d-icon 'arrow-right'}}
+  {{/if}}
 </div>
