@@ -1,0 +1,6 @@
+// Elements to hide
+#navigation-bar {
+  li[title='browse docs topics'] {
+    display: none;
+  }
+}

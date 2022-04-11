@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono|Roboto&display=swap');
+
 :root {
   --heading-font-family: neue-haas-grotesk-text, sans-serif;
   --monospace-font-family: 'IBM Plex Mono', monospace;
@@ -22,4 +24,10 @@ body {
 
 #search-term {
   font-family: var(--monospace-font-family);
+}
+
+p {
+  font-family: var(--monospace-font-family);
+  font-weight: 300;
+  color: var(--primary);
 }

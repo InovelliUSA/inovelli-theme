@@ -1,0 +1,13 @@
+.category-heading p {
+  font-size: 1.1em;
+}
+
+.extra-info-wrapper .topic-link {
+  color: var(--primary);
+}
+
+.extra-info-wrapper .badge-wrapper.bullet span.badge-category,
+.extra-info-wrapper .badge-wrapper.bar span.badge-category,
+.extra-info-wrapper .badge-wrapper.none span.badge-category {
+  color: var(--header_primary);
+}
