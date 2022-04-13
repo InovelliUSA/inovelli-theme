@@ -4,21 +4,21 @@ import { h } from 'virtual-dom';
 
 export default apiInitializer('0.11.1', (api) => {
   // Fix prefers dark theme and toggle issues:
-  api.reopenWidget('home-logo', {
-    logoElement(key, url, title) {
-      const attributes =
-        key === 'logo-small'
-          ? { src: getURL(url), width: 36, alt: title }
-          : { src: getURL(url), alt: title };
+  // api.reopenWidget('home-logo', {
+  //   logoElement(key, url, title) {
+  //     const attributes =
+  //       key === 'logo-small'
+  //         ? { src: getURL(url), width: 36, alt: title }
+  //         : { src: getURL(url), alt: title };
 
-      const imgElement = h(`img#site-logo.${key}`, {
-        key,
-        attributes,
-      });
+  //     const imgElement = h(`img#site-logo.${key}`, {
+  //       key,
+  //       attributes,
+  //     });
 
-      return imgElement;
-    },
-  });
+  //     return imgElement;
+  //   },
+  // });
 
   api.registerConnectorClass('below-site-header', 'inovelli-menu-panel', {
     setupComponent(attrs, component) {
