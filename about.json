@@ -20,12 +20,12 @@
       "love": "ed1c24"
     },
     "inovelli dark": {
-      "primary": "ECECEC",
-      "secondary": "0F1A20",
+      "primary": "FFFFFF",
+      "secondary": "000000",
       "tertiary": "ed1c24",
       "quaternary": "ed1c24",
-      "header_background": "0F1A20",
-      "header_primary": "ECECEC",
+      "header_background": "000000",
+      "header_primary": "FFFFFF",
       "highlight": "a87137",
       "danger": "e45735",
       "success": "1ca551",
