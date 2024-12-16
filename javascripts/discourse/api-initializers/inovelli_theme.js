@@ -3,23 +3,18 @@ import { apiInitializer } from 'discourse/lib/api';
 import { h } from 'virtual-dom';
 
 export default apiInitializer('0.11.1', (api) => {
-  // Fix prefers dark theme and toggle issues:
-  api.reopenWidget('home-logo', {
-    logoElement(key, url, title) {
-      const attributes =
-        key === 'logo-small'
-          ? { src: getURL(url), width: 36, alt: title }
-          : { src: getURL(url), alt: title };
+  // Update logo rendering with api.decorateWidget
+  api.decorateWidget('home-logo:after', (helper) => {
+    const { key, url, title } = helper.attrs;
+    const attributes =
+      key === 'logo-small'
+        ? { src: getURL(url), width: 36, alt: title }
+        : { src: getURL(url), alt: title };
 
-      const imgElement = h(`img#site-logo.${key}`, {
-        key,
-        attributes,
-      });
-
-      return imgElement;
-    },
+    return h(`img#site-logo.${key}`, { attributes });
   });
 
+  // Register custom menu panel for below-site-header
   api.registerConnectorClass('below-site-header', 'inovelli-menu-panel', {
     setupComponent(attrs, component) {
       const menuData = settings.menu_items.split('|');
@@ -28,40 +23,23 @@ export default apiInitializer('0.11.1', (api) => {
       const subMenuItems = [];
 
       subMenuData.forEach((item) => {
-        const subMenuItem = item.split(',');
-        const subMenuObject = {
-          parent: subMenuItem[0],
-          title: subMenuItem[1],
-          url: subMenuItem[2],
-        };
-
-        subMenuItems.push(subMenuObject);
+        const [parent, title, url] = item.split(',');
+        subMenuItems.push({ parent, title, url });
       });
 
       menuData.forEach((item) => {
-        const menuItem = item.split(',');
-
-        const menuObject = {
-          title: menuItem[0],
-          url: menuItem[1],
-          hasChildren: menuItem[2],
-        };
-
-        // if item has sub-menu items, find items and append to object:
+        const [title, url, hasChildren] = item.split(',');
+        const menuObject = { title, url, hasChildren: !!hasChildren };
         if (menuObject.hasChildren) {
-          menuObject.children = [];
-          subMenuItems.map((subItem) => {
-            if (subItem.parent === menuObject.title) {
-              menuObject.children.push(subItem);
-            }
-          });
+          menuObject.children = subMenuItems.filter(
+            (subItem) => subItem.parent === menuObject.title
+          );
         }
         menuItems.push(menuObject);
       });
 
       component.set('menuItems', menuItems);
     },
-
     actions: {
       returnMain() {
         this.set('showSubMenu', '');
@@ -69,20 +47,18 @@ export default apiInitializer('0.11.1', (api) => {
     },
   });
 
-  api.decorateWidget('header-contents:before', (helper) => {
+  // Attach custom menu to the header
+  api.decorateComponent('header:before', (helper) => {
     return helper.attach('inovelli-menu');
   });
 
+  // Define custom widget for the menu
   api.createWidget('inovelli-menu', {
     tagName: 'nav.inovelli-menu',
     buildKey: (attrs) => `inovelli-menu-button-${attrs.id}`,
-
     defaultState() {
-      return {
-        active: 'inactive',
-      };
+      return { active: 'inactive' };
     },
-
     html(attrs, state) {
       const hamburgerButton = [
         h('span.sr-only', 'Menu'),
@@ -90,25 +66,20 @@ export default apiInitializer('0.11.1', (api) => {
         h('span.bar-middle', ''),
         h('span.bar-bottom', ''),
       ];
-
-      const menuButton = h(
-        `div.inovelli-menu-toggle.${state.active}`,
-        hamburgerButton
-      );
-
-      return menuButton;
+      return h(`div.inovelli-menu-toggle.${state.active}`, hamburgerButton);
     },
-
     click() {
+      const bodyClass = 'inovelli-menu-active';
       if (this.state.active === 'inactive') {
-        document.body.classList.add('inovelli-menu-active');
+        document.body.classList.add(bodyClass);
         this.state.active = 'active';
       } else {
-        document.body.classList.remove('inovelli-menu-active');
+        document.body.classList.remove(bodyClass);
         this.state.active = 'inactive';
       }
     },
   });
 
+  // Example of icon replacement (optional)
   api.replaceIcon('bars', 'cog');
 });
