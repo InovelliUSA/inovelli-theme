@@ -2,7 +2,7 @@ import getURL from 'discourse-common/lib/get-url';
 import { apiInitializer } from 'discourse/lib/api';
 import { h } from 'virtual-dom';
 import { schedule } from '@ember/runloop';
-import DButton from "discourse/components/d-button";
+import { createWidget } from 'discourse/widgets/widget';
 
 export default apiInitializer('0.11.1', (api) => {
   // Fix prefers dark theme and toggle issues:
@@ -71,45 +71,8 @@ export default apiInitializer('0.11.1', (api) => {
     },
   });
 
-  api.decorateWidget('header-contents:before', (helper) => {
-    return helper.attach('inovelli-menu');
-  });
-
-  api.createWidget('inovelli-menu', {
-    tagName: 'nav.inovelli-menu',
-    buildKey: (attrs) => `inovelli-menu-button-${attrs.id}`,
-
-    defaultState() {
-      return {
-        active: 'inactive',
-      };
-    },
-
-    html(attrs, state) {
-      const hamburgerButton = [
-        h('span.sr-only', 'Menu'),
-        h('span.bar-top', ''),
-        h('span.bar-middle', ''),
-        h('span.bar-bottom', ''),
-      ];
-
-      const menuButton = h(
-        `div.inovelli-menu-toggle.${state.active}`,
-        hamburgerButton
-      );
-
-      return menuButton;
-    },
-
-    click() {
-      if (this.state.active === 'inactive') {
-        document.body.classList.add('inovelli-menu-active');
-        this.state.active = 'active';
-      } else {
-        document.body.classList.remove('inovelli-menu-active');
-        this.state.active = 'inactive';
-      }
-    },
+  api.decorateWidget('header-buttons:before', (helper) => {
+    return helper.attach('inovelli-menu', { id: 'inovelli-menu' });
   });
 
   api.replaceIcon('bars', 'cog');
