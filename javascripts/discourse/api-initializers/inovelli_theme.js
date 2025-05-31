@@ -81,11 +81,11 @@ export default apiInitializer('1.8.0', (api) => {
     },
   });
 
-  // Attach custom menu to the header using newer pattern
-  api.decorateWidget('header-buttons:before', {
-    widget: 'inovelli-menu'
+  // Update header widget decoration to use the new pattern
+  api.decorateWidget('header-buttons:before', (helper) => {
+    return helper.attach('inovelli-menu', { id: 'inovelli-menu' });
   });
 
-  // Example of icon replacement (optional)
-  api.replaceIcon('bars', 'cog');
+  // Remove deprecated icon replacement
+  // api.replaceIcon('bars', 'cog');
 });
