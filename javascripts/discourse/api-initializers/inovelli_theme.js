@@ -1,8 +1,6 @@
 import getURL from 'discourse-common/lib/get-url';
 import { apiInitializer } from 'discourse/lib/api';
 import { h } from 'virtual-dom';
-import { schedule } from '@ember/runloop';
-import { createWidget } from 'discourse/widgets/widget';
 
 export default apiInitializer('0.11.1', (api) => {
   // Fix prefers dark theme and toggle issues:
@@ -71,32 +69,46 @@ export default apiInitializer('0.11.1', (api) => {
     },
   });
 
-  api.decorateWidget('header-buttons:before', (helper) => {
-    return helper.attach('inovelli-menu', { id: 'inovelli-menu' });
+  api.decorateWidget('header-contents:before', (helper) => {
+    return helper.attach('inovelli-menu');
+  });
+
+  api.createWidget('inovelli-menu', {
+    tagName: 'nav.inovelli-menu',
+    buildKey: (attrs) => `inovelli-menu-button-${attrs.id}`,
+
+    defaultState() {
+      return {
+        active: 'inactive',
+      };
+    },
+
+    html(attrs, state) {
+      const hamburgerButton = [
+        h('span.sr-only', 'Menu'),
+        h('span.bar-top', ''),
+        h('span.bar-middle', ''),
+        h('span.bar-bottom', ''),
+      ];
+
+      const menuButton = h(
+        `div.inovelli-menu-toggle.${state.active}`,
+        hamburgerButton
+      );
+
+      return menuButton;
+    },
+
+    click() {
+      if (this.state.active === 'inactive') {
+        document.body.classList.add('inovelli-menu-active');
+        this.state.active = 'active';
+      } else {
+        document.body.classList.remove('inovelli-menu-active');
+        this.state.active = 'inactive';
+      }
+    },
   });
 
   api.replaceIcon('bars', 'cog');
-
-  // Register the menu button component
-  api.registerComponent('inovelli-menu-button', {
-    templateName: 'components/inovelli-menu-button',
-    actions: {
-      toggleMenu() {
-        const bodyClass = 'inovelli-menu-active';
-        schedule('afterRender', () => {
-          if (document.body.classList.contains(bodyClass)) {
-            document.body.classList.remove(bodyClass);
-          } else {
-            document.body.classList.add(bodyClass);
-          }
-        });
-      }
-    }
-  });
-
-  // Add menu button to header using the new API
-  api.headerButtons.add("inovelli-menu", {
-    template: "components/inovelli-menu-button",
-    before: "auth"
-  });
 });
