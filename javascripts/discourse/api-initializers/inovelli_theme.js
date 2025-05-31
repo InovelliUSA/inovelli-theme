@@ -2,22 +2,9 @@ import getURL from 'discourse-common/lib/get-url';
 import { apiInitializer } from 'discourse/lib/api';
 import { h } from 'virtual-dom';
 import { schedule } from '@ember/runloop';
-import Component from '@ember/component';
+import { createWidget } from 'discourse/widgets/widget';
 
 export default apiInitializer('1.8.0', (api) => {
-  // Update logo rendering with newer api pattern
-  api.reopenWidget('home-logo:after', {
-    html(attrs) {
-      const { key, url, title } = attrs;
-      const attributes =
-        key === 'logo-small'
-          ? { src: getURL(url), width: 36, alt: title }
-          : { src: getURL(url), alt: title };
-
-      return h(`img#site-logo.${key}`, { attributes });
-    }
-  });
-
   // Register custom menu panel for below-site-header
   api.registerConnectorClass('below-site-header', 'inovelli-menu-panel', {
     setupComponent(attrs, component) {
@@ -51,29 +38,38 @@ export default apiInitializer('1.8.0', (api) => {
     },
   });
 
-  // Register the menu button component
-  api.registerComponent('inovelli-menu-button', {
-    templateName: 'components/inovelli-menu-button',
-    actions: {
-      toggleMenu() {
-        const bodyClass = 'inovelli-menu-active';
-        schedule('afterRender', () => {
-          if (document.body.classList.contains(bodyClass)) {
-            document.body.classList.remove(bodyClass);
-          } else {
-            document.body.classList.add(bodyClass);
-          }
-        });
-      }
-    }
+  // Define custom widget for the menu
+  createWidget('inovelli-menu', {
+    tagName: 'nav.inovelli-menu',
+    buildKey: (attrs) => `inovelli-menu-button-${attrs.id}`,
+    defaultState() {
+      return { active: 'inactive' };
+    },
+    html(attrs, state) {
+      const hamburgerButton = [
+        h('span.sr-only', 'Menu'),
+        h('span.bar-top', ''),
+        h('span.bar-middle', ''),
+        h('span.bar-bottom', ''),
+      ];
+      return h(`div.inovelli-menu-toggle.${state.active}`, hamburgerButton);
+    },
+    click() {
+      const bodyClass = 'inovelli-menu-active';
+      schedule('afterRender', () => {
+        if (this.state.active === 'inactive') {
+          document.body.classList.add(bodyClass);
+          this.state.active = 'active';
+        } else {
+          document.body.classList.remove(bodyClass);
+          this.state.active = 'inactive';
+        }
+      });
+    },
   });
 
-  // Add menu button to header
-  api.headerButtons.add("inovelli-menu", {
-    template: "components/inovelli-menu-button",
-    before: "auth"
+  // Attach custom menu to the header
+  api.decorateWidget('header-buttons:before', (helper) => {
+    return helper.attach('inovelli-menu', { id: 'inovelli-menu' });
   });
-
-  // Remove deprecated icon replacement
-  // api.replaceIcon('bars', 'cog');
 });
