@@ -2,7 +2,7 @@ import getURL from 'discourse-common/lib/get-url';
 import { apiInitializer } from 'discourse/lib/api';
 import { h } from 'virtual-dom';
 import { schedule } from '@ember/runloop';
-import DButton from "discourse/components/d-button";
+import Component from '@ember/component';
 
 export default apiInitializer('1.8.0', (api) => {
   // Update logo rendering with newer api pattern
@@ -51,14 +51,9 @@ export default apiInitializer('1.8.0', (api) => {
     },
   });
 
-  // Add menu button using the new headerButtons API
-  api.headerButtons.add("inovelli-menu", {
-    template: "components/inovelli-menu-button",
-    before: "auth"
-  });
-
-  // Add click handler for the menu button
-  api.modifyClass('component:header-buttons', {
+  // Register the menu button component
+  api.registerComponent('inovelli-menu-button', {
+    templateName: 'components/inovelli-menu-button',
     actions: {
       toggleMenu() {
         const bodyClass = 'inovelli-menu-active';
@@ -71,6 +66,12 @@ export default apiInitializer('1.8.0', (api) => {
         });
       }
     }
+  });
+
+  // Add menu button to header
+  api.headerButtons.add("inovelli-menu", {
+    template: "components/inovelli-menu-button",
+    before: "auth"
   });
 
   // Remove deprecated icon replacement
