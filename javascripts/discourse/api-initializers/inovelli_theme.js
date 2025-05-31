@@ -2,7 +2,7 @@ import getURL from 'discourse-common/lib/get-url';
 import { apiInitializer } from 'discourse/lib/api';
 import { h } from 'virtual-dom';
 import { schedule } from '@ember/runloop';
-import { createWidget } from 'discourse/widgets/widget';
+import Component from '@ember/component';
 
 export default apiInitializer('1.8.0', (api) => {
   // Register custom menu panel for below-site-header
@@ -38,38 +38,26 @@ export default apiInitializer('1.8.0', (api) => {
     },
   });
 
-  // Define custom widget for the menu
-  createWidget('inovelli-menu', {
-    tagName: 'nav.inovelli-menu',
-    buildKey: (attrs) => `inovelli-menu-button-${attrs.id}`,
-    defaultState() {
-      return { active: 'inactive' };
-    },
-    html(attrs, state) {
-      const hamburgerButton = [
-        h('span.sr-only', 'Menu'),
-        h('span.bar-top', ''),
-        h('span.bar-middle', ''),
-        h('span.bar-bottom', ''),
-      ];
-      return h(`div.inovelli-menu-toggle.${state.active}`, hamburgerButton);
-    },
-    click() {
-      const bodyClass = 'inovelli-menu-active';
-      schedule('afterRender', () => {
-        if (this.state.active === 'inactive') {
-          document.body.classList.add(bodyClass);
-          this.state.active = 'active';
-        } else {
-          document.body.classList.remove(bodyClass);
-          this.state.active = 'inactive';
-        }
-      });
-    },
+  // Register the menu button component
+  api.registerComponent('inovelli-menu-button', {
+    templateName: 'components/inovelli-menu-button',
+    actions: {
+      toggleMenu() {
+        const bodyClass = 'inovelli-menu-active';
+        schedule('afterRender', () => {
+          if (document.body.classList.contains(bodyClass)) {
+            document.body.classList.remove(bodyClass);
+          } else {
+            document.body.classList.add(bodyClass);
+          }
+        });
+      }
+    }
   });
 
-  // Attach custom menu to the header
-  api.decorateWidget('header-buttons:before', (helper) => {
-    return helper.attach('inovelli-menu', { id: 'inovelli-menu' });
+  // Add menu button to header using the new API
+  api.headerButtons.add("inovelli-menu", {
+    template: "components/inovelli-menu-button",
+    before: "auth"
   });
 });
