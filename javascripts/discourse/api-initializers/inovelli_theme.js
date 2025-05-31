@@ -2,7 +2,7 @@ import getURL from 'discourse-common/lib/get-url';
 import { apiInitializer } from 'discourse/lib/api';
 import { h } from 'virtual-dom';
 import { schedule } from '@ember/runloop';
-import { createWidget } from 'discourse/widgets/widget';
+import DButton from "discourse/components/d-button";
 
 export default apiInitializer('1.8.0', (api) => {
   // Update logo rendering with newer api pattern
@@ -51,39 +51,26 @@ export default apiInitializer('1.8.0', (api) => {
     },
   });
 
-  // Define custom widget for the menu using newer widget pattern
-  createWidget('inovelli-menu', {
-    tagName: 'nav.inovelli-menu',
-    buildKey: (attrs) => `inovelli-menu-button-${attrs.id}`,
-    defaultState() {
-      return { active: 'inactive' };
-    },
-    html(attrs, state) {
-      const hamburgerButton = [
-        h('span.sr-only', 'Menu'),
-        h('span.bar-top', ''),
-        h('span.bar-middle', ''),
-        h('span.bar-bottom', ''),
-      ];
-      return h(`div.inovelli-menu-toggle.${state.active}`, hamburgerButton);
-    },
-    click() {
-      const bodyClass = 'inovelli-menu-active';
-      schedule('afterRender', () => {
-        if (this.state.active === 'inactive') {
-          document.body.classList.add(bodyClass);
-          this.state.active = 'active';
-        } else {
-          document.body.classList.remove(bodyClass);
-          this.state.active = 'inactive';
-        }
-      });
-    },
+  // Add menu button using the new headerButtons API
+  api.headerButtons.add("inovelli-menu", {
+    template: "components/inovelli-menu-button",
+    before: "auth"
   });
 
-  // Update header widget decoration to use the new pattern
-  api.decorateWidget('header-buttons:before', (helper) => {
-    return helper.attach('inovelli-menu', { id: 'inovelli-menu' });
+  // Add click handler for the menu button
+  api.modifyClass('component:header-buttons', {
+    actions: {
+      toggleMenu() {
+        const bodyClass = 'inovelli-menu-active';
+        schedule('afterRender', () => {
+          if (document.body.classList.contains(bodyClass)) {
+            document.body.classList.remove(bodyClass);
+          } else {
+            document.body.classList.add(bodyClass);
+          }
+        });
+      }
+    }
   });
 
   // Remove deprecated icon replacement
