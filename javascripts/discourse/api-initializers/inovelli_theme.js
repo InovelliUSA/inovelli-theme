@@ -1,6 +1,8 @@
 import getURL from 'discourse-common/lib/get-url';
 import { apiInitializer } from 'discourse/lib/api';
 import { h } from 'virtual-dom';
+import { schedule } from '@ember/runloop';
+import DButton from "discourse/components/d-button";
 
 export default apiInitializer('0.11.1', (api) => {
   // Fix prefers dark theme and toggle issues:
@@ -111,4 +113,27 @@ export default apiInitializer('0.11.1', (api) => {
   });
 
   api.replaceIcon('bars', 'cog');
+
+  // Register the menu button component
+  api.registerComponent('inovelli-menu-button', {
+    templateName: 'components/inovelli-menu-button',
+    actions: {
+      toggleMenu() {
+        const bodyClass = 'inovelli-menu-active';
+        schedule('afterRender', () => {
+          if (document.body.classList.contains(bodyClass)) {
+            document.body.classList.remove(bodyClass);
+          } else {
+            document.body.classList.add(bodyClass);
+          }
+        });
+      }
+    }
+  });
+
+  // Add menu button to header using the new API
+  api.headerButtons.add("inovelli-menu", {
+    template: "components/inovelli-menu-button",
+    before: "auth"
+  });
 });
