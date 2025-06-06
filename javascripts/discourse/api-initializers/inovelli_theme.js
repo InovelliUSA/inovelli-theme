@@ -1,6 +1,8 @@
 import getURL from 'discourse-common/lib/get-url';
 import { apiInitializer } from 'discourse/lib/api';
 import { h } from 'virtual-dom';
+import { schedule } from '@ember/runloop';
+import { createWidget } from 'discourse/widgets/widget';
 
 export default apiInitializer('0.11.1', (api) => {
   // Fix prefers dark theme and toggle issues:
@@ -109,6 +111,4 @@ export default apiInitializer('0.11.1', (api) => {
       }
     },
   });
-
-  api.replaceIcon('bars', 'cog');
 });
