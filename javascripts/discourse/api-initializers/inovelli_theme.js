@@ -71,11 +71,50 @@ export default apiInitializer('0.11.1', (api) => {
     },
   });
 
+  // Create theme toggle widget
+  createWidget('inovelli-theme-toggle', {
+    tagName: 'div.inovelli-theme-toggle',
+    buildKey: () => 'inovelli-theme-toggle',
+
+    defaultState() {
+      return {
+        isDark: document.documentElement.classList.contains('dark-theme')
+      };
+    },
+
+    html(attrs, state) {
+      const icon = state.isDark ? 'sun' : 'moon';
+      return h('button.btn.btn-flat', {
+        attributes: {
+          title: state.isDark ? 'Switch to light theme' : 'Switch to dark theme'
+        }
+      }, [
+        h('span.d-icon.d-icon-' + icon)
+      ]);
+    },
+
+    click() {
+      const isDark = !this.state.isDark;
+      this.state.isDark = isDark;
+      
+      if (isDark) {
+        document.documentElement.classList.add('dark-theme');
+        document.documentElement.classList.remove('light-theme');
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.documentElement.classList.remove('dark-theme');
+      }
+    }
+  });
+
+  // Attach menu to header
   api.decorateWidget('header-contents:before', (helper) => {
-    return [
-      helper.attach('inovelli-menu'),
-      helper.attach('inovelli-theme-toggle')
-    ];
+    return helper.attach('inovelli-menu');
+  });
+
+  // Attach theme toggle to header buttons
+  api.decorateWidget('header-buttons:before', (helper) => {
+    return helper.attach('inovelli-theme-toggle');
   });
 
   api.createWidget('inovelli-menu', {
@@ -113,41 +152,5 @@ export default apiInitializer('0.11.1', (api) => {
         this.state.active = 'inactive';
       }
     },
-  });
-
-  // Create theme toggle widget
-  createWidget('inovelli-theme-toggle', {
-    tagName: 'div.inovelli-theme-toggle',
-    buildKey: () => 'inovelli-theme-toggle',
-
-    defaultState() {
-      return {
-        isDark: document.documentElement.classList.contains('dark-theme')
-      };
-    },
-
-    html(attrs, state) {
-      const icon = state.isDark ? 'sun' : 'moon';
-      return h('button.btn.btn-flat', {
-        attributes: {
-          title: state.isDark ? 'Switch to light theme' : 'Switch to dark theme'
-        }
-      }, [
-        h('span.d-icon.d-icon-' + icon)
-      ]);
-    },
-
-    click() {
-      const isDark = !this.state.isDark;
-      this.state.isDark = isDark;
-      
-      if (isDark) {
-        document.documentElement.classList.add('dark-theme');
-        document.documentElement.classList.remove('light-theme');
-      } else {
-        document.documentElement.classList.add('light-theme');
-        document.documentElement.classList.remove('dark-theme');
-      }
-    }
   });
 });
