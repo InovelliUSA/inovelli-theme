@@ -3,8 +3,6 @@ import { apiInitializer } from 'discourse/lib/api';
 import { h } from 'virtual-dom';
 import { schedule } from '@ember/runloop';
 import { createWidget } from 'discourse/widgets/widget';
-import Component from '@glimmer/component';
-import { action } from '@ember/object';
 
 export default apiInitializer('0.11.1', (api) => {
   // Fix prefers dark theme and toggle issues:
@@ -73,34 +71,50 @@ export default apiInitializer('0.11.1', (api) => {
     },
   });
 
-  // Register theme toggle component
-  api.registerComponent('inovelli-theme-toggle', {
-    templateName: 'components/inovelli-theme-toggle',
-    actions: {
-      toggleTheme() {
-        const isDark = !document.documentElement.classList.contains('dark-theme');
-        if (isDark) {
-          document.documentElement.classList.add('dark-theme');
-          document.documentElement.classList.remove('light-theme');
-        } else {
-          document.documentElement.classList.add('light-theme');
-          document.documentElement.classList.remove('dark-theme');
+  // Create theme toggle widget
+  createWidget('inovelli-theme-toggle', {
+    tagName: 'div.inovelli-theme-toggle',
+    buildKey: () => 'inovelli-theme-toggle',
+
+    defaultState() {
+      return {
+        isDark: document.documentElement.classList.contains('dark-theme')
+      };
+    },
+
+    html(attrs, state) {
+      const icon = state.isDark ? 'sun' : 'moon';
+      return h('button.btn.btn-flat', {
+        attributes: {
+          title: state.isDark ? 'Switch to light theme' : 'Switch to dark theme'
         }
+      }, [
+        h('span.d-icon.d-icon-' + icon)
+      ]);
+    },
+
+    click() {
+      const isDark = !this.state.isDark;
+      this.state.isDark = isDark;
+      
+      if (isDark) {
+        document.documentElement.classList.add('dark-theme');
+        document.documentElement.classList.remove('light-theme');
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.documentElement.classList.remove('dark-theme');
       }
     }
-  });
-
-  // Add theme toggle to header
-  api.headerButtons.add('inovelli-theme-toggle', {
-    icon: 'moon',
-    title: 'Toggle theme',
-    action: 'toggleTheme',
-    position: 'right'
   });
 
   // Attach menu to header
   api.decorateWidget('header-contents:before', (helper) => {
     return helper.attach('inovelli-menu');
+  });
+
+  // Attach theme toggle to header
+  api.decorateWidget('header-buttons:before', (helper) => {
+    return helper.attach('inovelli-theme-toggle');
   });
 
   api.createWidget('inovelli-menu', {
